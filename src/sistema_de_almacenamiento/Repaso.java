@@ -2,17 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package controler;
+package sistema_de_almacenamiento;
 
-import java.util.Scanner;
+
+import controler.Utilidades;
+import java.io.File;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author nicof
  */
+
 public class Repaso {
-    private static Scanner sc = new Scanner(System.in);
+    Utilidades u = new Utilidades();
     public int inicioSesion(String usuario, String contraseña, String U, String C, String U2, String C2){
         int contador = 3;
         int retorno = 0;
@@ -32,5 +35,7 @@ public class Repaso {
             contador--;
         return retorno;
     }
-
+    
 }
+
+

@@ -4,6 +4,7 @@
  */
 package views;
 
+import controler.Utilidades;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -12,21 +13,49 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import java.lang.String;
 import javax.swing.JButton;
+import views.tablas.ModeloTablaArchivo;
 
 /**
  *
  * @author nicof
  */
-public class Matias1 extends javax.swing.JFrame {
 
+public class Matias1 extends javax.swing.JFrame {
+private Utilidades u = new Utilidades();
+private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
     /**
      * Creates new form Matias1
      */
     public Matias1() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        cargarTabla();
     }
 
+    private void cargarTabla() {
+        if (u.listar() != null && u.listar().length > 0) {
+            System.out.println("");
+            mtl.setData(u.listar());
+            tbltabla.setModel(mtl);
+            tbltabla.updateUI();
+        }
+
+    }
+    private void guardar() {
+        if (txtnombre.getText().isEmpty() || txtdireccion.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Faltan datos", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (u.guardar_archivo(txtnombre.getText(), txtdireccion.getText())) {
+                JOptionPane.showMessageDialog(null, "Se ha registrado correctamente", "Mensaje de exito", JOptionPane.INFORMATION_MESSAGE);
+                Limpiar1();
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo guardar", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    private void Limpiar1(){
+        txtnombre.setText("");
+        txtdireccion.setText("");
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,144 +66,152 @@ public class Matias1 extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        bienvenida = new javax.swing.JLabel();
-        agregar = new javax.swing.JButton();
+        Busqueda = new javax.swing.JLabel();
+        btnagregar = new javax.swing.JButton();
         javax.swing.JPanel Lista = new javax.swing.JPanel();
-        archivo1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbltabla = new javax.swing.JTable();
+        btnbuscar = new javax.swing.JButton();
+        txttipo = new javax.swing.JTextField();
+        txtnombre = new javax.swing.JTextField();
+        JLabel5 = new javax.swing.JLabel();
+        txtdireccion = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bienvenida1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtnombrebuscar = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setLayout(null);
 
-        bienvenida.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        bienvenida.setForeground(new java.awt.Color(0, 0, 0));
-        bienvenida.setText("Bienvenido, Matias");
+        Busqueda.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
+        Busqueda.setForeground(new java.awt.Color(0, 0, 0));
+        Busqueda.setText("Buscar archivos:");
+        jPanel1.add(Busqueda);
+        Busqueda.setBounds(500, 30, 251, 26);
 
-        agregar.setBackground(new java.awt.Color(255, 255, 255));
-        agregar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        agregar.setForeground(new java.awt.Color(0, 0, 0));
-        agregar.setText("Agregar Archivo");
-        agregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        agregar.addActionListener(new java.awt.event.ActionListener() {
+        btnagregar.setBackground(new java.awt.Color(255, 255, 255));
+        btnagregar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnagregar.setForeground(new java.awt.Color(0, 0, 0));
+        btnagregar.setText("Agregar Archivo");
+        btnagregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnagregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                agregarActionPerformed(evt);
+                btnagregarActionPerformed(evt);
             }
         });
+        jPanel1.add(btnagregar);
+        btnagregar.setBounds(280, 130, 135, 33);
 
         Lista.setBackground(new java.awt.Color(255, 255, 255));
-        Lista.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        Lista.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tus archivos guardados:", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         Lista.setForeground(new java.awt.Color(0, 0, 0));
+        Lista.setAutoscrolls(true);
         Lista.addContainerListener(new java.awt.event.ContainerAdapter() {
             public void componentAdded(java.awt.event.ContainerEvent evt) {
                 ListaComponentAdded(evt);
             }
         });
+        Lista.setLayout(null);
 
-        archivo1.setBackground(new java.awt.Color(255, 255, 255));
-        archivo1.setForeground(new java.awt.Color(0, 0, 0));
-        archivo1.setText("Avance del proyecto de programacion - Correccion final del avance 1");
-        archivo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        archivo1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        archivo1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        archivo1.addActionListener(new java.awt.event.ActionListener() {
+        tbltabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tbltabla);
+
+        Lista.add(jScrollPane1);
+        jScrollPane1.setBounds(20, 30, 452, 234);
+
+        jPanel1.add(Lista);
+        Lista.setBounds(10, 210, 770, 280);
+
+        btnbuscar.setBackground(new java.awt.Color(255, 255, 255));
+        btnbuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnbuscar.setForeground(new java.awt.Color(0, 0, 0));
+        btnbuscar.setText("Buscar");
+        btnbuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel1.add(btnbuscar);
+        btnbuscar.setBounds(902, 113, 83, 30);
+
+        txttipo.setBackground(new java.awt.Color(255, 255, 255));
+        txttipo.setForeground(new java.awt.Color(0, 0, 0));
+        txttipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                archivo1ActionPerformed(evt);
+                txttipoActionPerformed(evt);
             }
         });
+        jPanel1.add(txttipo);
+        txttipo.setBounds(550, 160, 90, 22);
 
-        jButton2.setBackground(new java.awt.Color(255, 255, 255));
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jButton2.setText("Ensayo de programacion (1)");
-        jButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jButton2.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        jButton2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        txtnombre.setBackground(new java.awt.Color(255, 255, 255));
+        txtnombre.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(txtnombre);
+        txtnombre.setBounds(140, 110, 100, 22);
+
+        JLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        JLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        JLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        JLabel5.setText("Tipo");
+        jPanel1.add(JLabel5);
+        JLabel5.setBounds(480, 160, 60, 20);
+
+        txtdireccion.setBackground(new java.awt.Color(255, 255, 255));
+        txtdireccion.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(txtdireccion);
+        txtdireccion.setBounds(140, 160, 100, 22);
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Direccion de carpeta:");
+        jPanel1.add(jLabel2);
+        jLabel2.setBounds(10, 160, 120, 20);
+
+        jPanel2.setLayout(null);
+        jPanel1.add(jPanel2);
+        jPanel2.setBounds(459, 0, 10, 210);
+
+        bienvenida1.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
+        bienvenida1.setForeground(new java.awt.Color(0, 0, 0));
+        bienvenida1.setText("Bienvenido, Matias");
+        jPanel1.add(bienvenida1);
+        bienvenida1.setBounds(20, 30, 251, 26);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Nombre del archivo");
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(10, 110, 110, 20);
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Nombre");
+        jPanel1.add(jLabel4);
+        jLabel4.setBounds(480, 110, 70, 20);
+
+        txtnombrebuscar.setBackground(new java.awt.Color(255, 255, 255));
+        txtnombrebuscar.setForeground(new java.awt.Color(0, 0, 0));
+        txtnombrebuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                txtnombrebuscarActionPerformed(evt);
             }
         });
-
-        jButton4.setBackground(new java.awt.Color(255, 255, 255));
-        jButton4.setForeground(new java.awt.Color(0, 0, 0));
-        jButton4.setText("Encarnación_Matias_Ensayo1_Computación");
-        jButton4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jButton4.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        jButton4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout ListaLayout = new javax.swing.GroupLayout(Lista);
-        Lista.setLayout(ListaLayout);
-        ListaLayout.setHorizontalGroup(
-            ListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(archivo1, javax.swing.GroupLayout.DEFAULT_SIZE, 963, Short.MAX_VALUE)
-            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        ListaLayout.setVerticalGroup(
-            ListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ListaLayout.createSequentialGroup()
-                .addComponent(archivo1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
-                .addGap(0, 277, Short.MAX_VALUE))
-        );
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Tus archivos guardados:");
-
-        jButton3.setBackground(new java.awt.Color(255, 255, 255));
-        jButton3.setForeground(new java.awt.Color(0, 0, 0));
-        jButton3.setText("Buscar");
-        jButton3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bienvenida, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(Lista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(bienvenida)
-                .addGap(18, 18, 18)
-                .addComponent(agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(Lista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel1.add(txtnombrebuscar);
+        txtnombrebuscar.setBounds(550, 110, 90, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -190,45 +227,21 @@ public class Matias1 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-        Agregar newframe = new Agregar();
-        newframe.setVisible(true);
-
-    }//GEN-LAST:event_agregarActionPerformed
-
-    private void archivo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_archivo1ActionPerformed
-        String rutaArchivo = "C:\\Users\\nicof\\OneDrive\\Desktop\\Demostracion\\Avance del proyecto de programación - Correcion final del avance 1.docx";
-        File Archivo = new File(rutaArchivo);
-        try {
-            Desktop.getDesktop().open(Archivo);
-        } catch (IOException e) {
-
-        }
-    }//GEN-LAST:event_archivo1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String rutaArchivo = "C:\\Users\\nicof\\OneDrive\\Desktop\\Demostracion\\Ensayo de Programación (1).docx";
-        File Archivo = new File(rutaArchivo);
-        try {
-            Desktop.getDesktop().open(Archivo);
-        } catch (IOException e) {
-
-        }
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        String rutaArchivo = "C:\\Users\\nicof\\OneDrive\\Desktop\\Demostracion\\Encarnación_Matias_Ensayo1_Computación.pdf";
-        File Archivo = new File(rutaArchivo);
-        try {
-            Desktop.getDesktop().open(Archivo);
-        } catch (IOException e) {
-
-        }
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void btnagregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnagregarActionPerformed
+        guardar();
+    }//GEN-LAST:event_btnagregarActionPerformed
 
     private void ListaComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_ListaComponentAdded
 
     }//GEN-LAST:event_ListaComponentAdded
+
+    private void txttipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttipoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txttipoActionPerformed
+
+    private void txtnombrebuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnombrebuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtnombrebuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,14 +279,21 @@ public class Matias1 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton agregar;
-    private javax.swing.JButton archivo1;
-    private javax.swing.JLabel bienvenida;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel Busqueda;
+    private javax.swing.JLabel JLabel5;
+    private javax.swing.JLabel bienvenida1;
+    private javax.swing.JButton btnagregar;
+    private javax.swing.JButton btnbuscar;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tbltabla;
+    private javax.swing.JTextField txtdireccion;
+    private javax.swing.JTextField txtnombre;
+    private javax.swing.JTextField txtnombrebuscar;
+    private javax.swing.JTextField txttipo;
     // End of variables declaration//GEN-END:variables
 }

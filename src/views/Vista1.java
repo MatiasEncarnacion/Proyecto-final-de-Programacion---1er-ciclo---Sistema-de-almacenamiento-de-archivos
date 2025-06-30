@@ -4,7 +4,7 @@
  */
 package views;
 
-import controler.Repaso;
+import sistema_de_almacenamiento.Repaso;
 import javax.swing.JOptionPane;
 
 /**

@@ -4,7 +4,6 @@
  */
 package sistema_de_almacenamiento;
 
-import controler.Repaso;
 import java.util.Scanner;
 
 /**
