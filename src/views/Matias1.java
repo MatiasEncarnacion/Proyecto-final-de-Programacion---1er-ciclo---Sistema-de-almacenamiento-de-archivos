@@ -8,11 +8,10 @@ import controler.Utilidades;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import java.lang.String;
-import javax.swing.JButton;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import views.tablas.ModeloTablaArchivo;
 
 /**
@@ -28,7 +27,8 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
      */
     public Matias1() {
         initComponents();
-        cargarTabla();
+        Limpiar1();
+        cargarcbx();
     }
 
     private void cargarTabla() {
@@ -38,8 +38,17 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
             tbltabla.setModel(mtl);
             tbltabla.updateUI();
         }
-
     }
+    private void cargarcbx(){
+        cbxabrir.removeAllItems();
+        if (tbltabla.getColumnCount() == 3) {
+        cbxabrir.addItem((String) this.mtl.getValueAt(0, 1));
+        for(int i = 1; i<tbltabla.getRowCount(); i++){ 
+        cbxabrir.addItem((String) this.mtl.getValueAt(i, 1));
+        } 
+        }
+    }
+    
     private void guardar() {
         if (txtnombre.getText().isEmpty() || txtdireccion.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Faltan datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -51,11 +60,37 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
                 JOptionPane.showMessageDialog(null, "No se pudo guardar", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+        
     }
     private void Limpiar1(){
         txtnombre.setText("");
         txtdireccion.setText("");
+        cargarTabla();
+        cargarcbx();
     }
+    private void copiar(){
+        
+    }
+    
+    private void AbrirArchivo(){
+        int indice = cbxabrir.getSelectedIndex();
+        String abrir = (String) tbltabla.getValueAt(indice, 2);
+        File archivo = new File(abrir);
+    try {
+        Desktop.getDesktop().open(archivo);
+    } catch (IOException ex) {
+        Logger.getLogger(Matias1.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    }
+    private void buscarDocumento(){
+    String name = txtnombrebuscar.getText().trim();
+    if (name.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingrese el nombre del documento a buscar.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
+        cargarTabla(); 
+        return;
+    }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,8 +106,8 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         javax.swing.JPanel Lista = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbltabla = new javax.swing.JTable();
-        btnbuscar = new javax.swing.JButton();
-        txttipo = new javax.swing.JTextField();
+        cbxabrir = new javax.swing.JComboBox<>();
+        btnabrir = new javax.swing.JButton();
         txtnombre = new javax.swing.JTextField();
         JLabel5 = new javax.swing.JLabel();
         txtdireccion = new javax.swing.JTextField();
@@ -82,6 +117,8 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtnombrebuscar = new javax.swing.JTextField();
+        btnbuscar = new javax.swing.JButton();
+        cbxtipos = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -134,31 +171,30 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         Lista.add(jScrollPane1);
         jScrollPane1.setBounds(20, 30, 452, 234);
 
-        jPanel1.add(Lista);
-        Lista.setBounds(10, 210, 770, 280);
+        cbxabrir.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        Lista.add(cbxabrir);
+        cbxabrir.setBounds(530, 30, 110, 22);
 
-        btnbuscar.setBackground(new java.awt.Color(255, 255, 255));
-        btnbuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnbuscar.setForeground(new java.awt.Color(0, 0, 0));
-        btnbuscar.setText("Buscar");
-        btnbuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel1.add(btnbuscar);
-        btnbuscar.setBounds(902, 113, 83, 30);
-
-        txttipo.setBackground(new java.awt.Color(255, 255, 255));
-        txttipo.setForeground(new java.awt.Color(0, 0, 0));
-        txttipo.addActionListener(new java.awt.event.ActionListener() {
+        btnabrir.setBackground(new java.awt.Color(255, 255, 255));
+        btnabrir.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnabrir.setForeground(new java.awt.Color(0, 0, 0));
+        btnabrir.setText("Abrir archivo");
+        btnabrir.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnabrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txttipoActionPerformed(evt);
+                btnabrirActionPerformed(evt);
             }
         });
-        jPanel1.add(txttipo);
-        txttipo.setBounds(550, 160, 90, 22);
+        Lista.add(btnabrir);
+        btnabrir.setBounds(530, 90, 120, 30);
+
+        jPanel1.add(Lista);
+        Lista.setBounds(10, 210, 770, 280);
 
         txtnombre.setBackground(new java.awt.Color(255, 255, 255));
         txtnombre.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.add(txtnombre);
-        txtnombre.setBounds(140, 110, 100, 22);
+        txtnombre.setBounds(140, 102, 100, 30);
 
         JLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         JLabel5.setForeground(new java.awt.Color(0, 0, 0));
@@ -170,7 +206,7 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         txtdireccion.setBackground(new java.awt.Color(255, 255, 255));
         txtdireccion.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.add(txtdireccion);
-        txtdireccion.setBounds(140, 160, 100, 22);
+        txtdireccion.setBounds(140, 152, 100, 30);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
@@ -185,7 +221,7 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
 
         bienvenida1.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
         bienvenida1.setForeground(new java.awt.Color(0, 0, 0));
-        bienvenida1.setText("Bienvenido, Matias");
+        bienvenida1.setText("Bienvenido de vuelta");
         jPanel1.add(bienvenida1);
         bienvenida1.setBounds(20, 30, 251, 26);
 
@@ -211,17 +247,34 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
             }
         });
         jPanel1.add(txtnombrebuscar);
-        txtnombrebuscar.setBounds(550, 110, 90, 22);
+        txtnombrebuscar.setBounds(550, 102, 90, 30);
+
+        btnbuscar.setBackground(new java.awt.Color(255, 255, 255));
+        btnbuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnbuscar.setForeground(new java.awt.Color(0, 0, 0));
+        btnbuscar.setText("Buscar");
+        btnbuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnbuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnbuscarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnbuscar);
+        btnbuscar.setBounds(700, 130, 83, 30);
+
+        cbxtipos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PDF", "WORD", "C" }));
+        jPanel1.add(cbxtipos);
+        cbxtipos.setBounds(550, 160, 90, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
         );
 
         pack();
@@ -235,13 +288,17 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
 
     }//GEN-LAST:event_ListaComponentAdded
 
-    private void txttipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttipoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txttipoActionPerformed
-
     private void txtnombrebuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnombrebuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtnombrebuscarActionPerformed
+
+    private void btnabrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnabrirActionPerformed
+        AbrirArchivo();
+    }//GEN-LAST:event_btnabrirActionPerformed
+
+    private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
+        buscarDocumento();
+    }//GEN-LAST:event_btnbuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -282,8 +339,11 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
     private javax.swing.JLabel Busqueda;
     private javax.swing.JLabel JLabel5;
     private javax.swing.JLabel bienvenida1;
+    private javax.swing.JButton btnabrir;
     private javax.swing.JButton btnagregar;
     private javax.swing.JButton btnbuscar;
+    private javax.swing.JComboBox<String> cbxabrir;
+    private javax.swing.JComboBox<String> cbxtipos;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -294,6 +354,6 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
     private javax.swing.JTextField txtdireccion;
     private javax.swing.JTextField txtnombre;
     private javax.swing.JTextField txtnombrebuscar;
-    private javax.swing.JTextField txttipo;
     // End of variables declaration//GEN-END:variables
 }
+
