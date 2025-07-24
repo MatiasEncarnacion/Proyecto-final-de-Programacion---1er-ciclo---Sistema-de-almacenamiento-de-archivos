@@ -17,7 +17,7 @@ public class Sistema_de_almacenamiento {
      */
     private static Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
-        Repaso rp = new Repaso();
+        InicioSesion rp = new InicioSesion();
         int identificador = 1;
         String U = "Matias";
         String U2 = "Leonel";
@@ -34,13 +34,13 @@ public class Sistema_de_almacenamiento {
             System.out.println("Inicio de sesion exitoso");
         } else if ((!usuario.equals(U) && contraseña.equals(C)) || (!usuario.equals(U2) && contraseña.equals(C2))){
             System.out.println("Usuario no registrado en el sistema, porfavor intente nuevamente");
-            retorno = rp.inicioSesion(usuario, contraseña, U, C, U2, C2);
+            retorno = rp.inicioSesion(usuario, contraseña, U, C);
         } else if ((usuario.equals(U) && !contraseña.equals(C)) || (usuario.equals(U2) && !contraseña.equals(C2))){
             System.out.println("Contraseña erronea, porfavor intente de nuevo");
-            retorno = rp.inicioSesion(usuario, contraseña, U, C, U2, C2);
+            retorno = rp.inicioSesion(usuario, contraseña, U, C);
         }  else if ((!usuario.equals(U) && !contraseña.equals(C)) || (!usuario.equals(U2) && !contraseña.equals(C2))){
             System.out.println("Datos de inicio de sesion incorrectos, intente nuevamente");
-            retorno = rp.inicioSesion(usuario, contraseña, U, C, U2, C2);
+            retorno = rp.inicioSesion(usuario, contraseña, U, C);
         }
         if (retorno == 2){
             System.out.println("Ha superado el limite de intentos de inicio de sesion");

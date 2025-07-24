@@ -4,6 +4,7 @@
  */
 package views;
 
+import controler.LeonelControler;
 import controler.Utilidades;
 import java.awt.Desktop;
 import java.io.File;
@@ -12,83 +13,246 @@ import javax.swing.JOptionPane;
 import java.lang.String;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
 import views.tablas.ModeloTablaArchivo;
 
 /**
  *
  * @author nicof
  */
-
 public class Matias1 extends javax.swing.JFrame {
-private Utilidades u = new Utilidades();
-private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
+
+    private Utilidades u = new Utilidades();
+    private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
+    private LeonelControler lc = new LeonelControler();
+    //Vista1 vi = new Vista1();
+
     /**
      * Creates new form Matias1
      */
     public Matias1() {
         initComponents();
-        Limpiar1();
-        cargarcbx();
+        tabla();
     }
 
-    private void cargarTabla() {
-        if (u.listar() != null && u.listar().length > 0) {
-            System.out.println("");
-            mtl.setData(u.listar());
-            tbltabla.setModel(mtl);
-            tbltabla.updateUI();
-        }
+    private void tabla(){
+        DefaultTableModel inicio = new DefaultTableModel();
+        inicio.setRowCount(0);
+        inicio.addColumn("Nro Archivo");
+        inicio.addColumn("Nombre");
+        inicio.addColumn("Direccion");
+        inicio.addColumn("Usuario");
+        tbltabla.setModel(inicio);
     }
-    private void cargarcbx(){
-        cbxabrir.removeAllItems();
-        if (tbltabla.getColumnCount() == 3) {
-        cbxabrir.addItem((String) this.mtl.getValueAt(0, 1));
-        for(int i = 1; i<tbltabla.getRowCount(); i++){ 
-        cbxabrir.addItem((String) this.mtl.getValueAt(i, 1));
-        } 
-        }
+    public static String labelname;
+    public String getlbl(String name){
+        System.out.println("nombre es "+name);
+        labelname = name;
+        System.out.println("cambios: "+labelname);
+        setlbl(labelname);
+        return labelname;
+    }
+    public void setlbl(String label){
+        System.out.println("labelname es: "+label);
+        this.lblnombre.setText(label);
+        System.out.println(lblnombre.getText());
+        filtrarxusuario();
     }
     
+    private void cargarTabla() {
+        if (u.listar() != null && u.listar().length > 0) {
+            System.out.println("tabla");
+            if(lblnombre.getText().isBlank()){
+                mtl.setData(u.listar());
+                tbltabla.setModel(mtl);
+                tbltabla.updateUI();
+                System.out.println("filtro no aceptado");
+            } else {
+                mtl.setData(u.listar());
+                tbltabla.setModel(mtl);
+                tbltabla.updateUI();
+                filtrarxusuario();
+                System.out.println("filtro aceptado");
+            }
+            
+        }
+    }
+
+    private void cargarcbx() {
+        cbxabrir.removeAllItems();
+        if (tbltabla.getColumnCount() == 4) {
+            if(tbltabla.getRowCount() == 1){
+            cbxabrir.addItem((String) tbltabla.getValueAt(0, 1));
+            } else {
+            cbxabrir.addItem((String) tbltabla.getValueAt(0, 1));
+            for (int i = 1; i < tbltabla.getRowCount(); i++) {
+                cbxabrir.addItem((String) tbltabla.getValueAt(i, 1));
+            }
+            }
+        }
+    }
+
     private void guardar() {
         if (txtnombre.getText().isEmpty() || txtdireccion.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Faltan datos", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            if (u.guardar_archivo(txtnombre.getText(), txtdireccion.getText())) {
+            if (u.guardar_archivo(txtnombre.getText(), txtdireccion.getText(), lblnombre.getText())) {
                 JOptionPane.showMessageDialog(null, "Se ha registrado correctamente", "Mensaje de exito", JOptionPane.INFORMATION_MESSAGE);
                 Limpiar1();
             } else {
                 JOptionPane.showMessageDialog(null, "No se pudo guardar", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        
+
     }
-    private void Limpiar1(){
+
+    private void Limpiar1() {
         txtnombre.setText("");
         txtdireccion.setText("");
+        txtnombrebuscar.setText("");
         cargarTabla();
         cargarcbx();
-    }
-    private void copiar(){
+            
         
     }
-    
-    private void AbrirArchivo(){
+
+    private void AbrirArchivo() {
         int indice = cbxabrir.getSelectedIndex();
         String abrir = (String) tbltabla.getValueAt(indice, 2);
         File archivo = new File(abrir);
-    try {
-        Desktop.getDesktop().open(archivo);
-    } catch (IOException ex) {
-        Logger.getLogger(Matias1.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            Desktop.getDesktop().open(archivo);
+        } catch (IOException ex) {
+            Logger.getLogger(Matias1.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    //Leonel
+    private void buscarDocumento() {
+        if (txtnombrebuscar.getText().isEmpty()) {
+            System.out.println("Esto es un mensaje de prueba");
+        }
+        String busqueda = txtnombrebuscar.getText().toLowerCase();
+        tbltabla.setModel(mtl);
+        filtrarxusuario();
+        int filas = tbltabla.getRowCount();
+        DefaultTableModel cargar = new DefaultTableModel();
+        cargar.setRowCount(0);
+        cargar.addColumn(tbltabla.getColumnName(0));
+        cargar.addColumn(tbltabla.getColumnName(1));
+        cargar.addColumn(tbltabla.getColumnName(2));
+        cargar.addColumn(tbltabla.getColumnName(3));
+        for (int i = 0; i <= filas - 1; i++) {
+            String nombre = tbltabla.getValueAt(i, 1).toString().toLowerCase();
+            if (nombre.startsWith(busqueda)) {
+                String[] cargartabla = {tbltabla.getValueAt(i, 0).toString(), tbltabla.getValueAt(i, 1).toString(),
+                    tbltabla.getValueAt(i, 2).toString(), tbltabla.getValueAt(i, 3).toString(),};
+                cargar.addRow(cargartabla);
+            }
+        }
+        tbltabla.setModel(cargar);
+        cargarcbx();
+        if(cbxtipos.getSelectedItem().toString().equals("TODOS")){
+            System.out.println("Mira si esta cargando el cbx");
+        } else{
+           cbxfiltro();
+        }
     }
-    private void buscarDocumento(){
-    String name = txtnombrebuscar.getText().trim();
-    if (name.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor, ingrese el nombre del documento a buscar.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
-        cargarTabla(); 
-        return;
+//Leonel
+//darwin
+    private void filtrarxusuario(){
+        String nombre = lblnombre.getText();
+        int filas = tbltabla.getRowCount();
+        DefaultTableModel cargar = new DefaultTableModel();
+        cargar.setRowCount(0);
+        cargar.addColumn(tbltabla.getColumnName(0));
+        cargar.addColumn(tbltabla.getColumnName(1));
+        cargar.addColumn(tbltabla.getColumnName(2));
+        cargar.addColumn(tbltabla.getColumnName(3));
+        String usuario;
+        for (int i = 0; i <= filas - 1; i++) {
+            usuario = tbltabla.getValueAt(i, 3).toString();
+            if (nombre.startsWith(usuario)) {
+                String[] cargartabla = {tbltabla.getValueAt(i, 0).toString(), tbltabla.getValueAt(i, 1).toString(),
+                    tbltabla.getValueAt(i, 2).toString(), tbltabla.getValueAt(i, 3).toString(),};
+                cargar.addRow(cargartabla);
+            } else {
+                System.out.println("No se ha cargado en la fila: "+i);
+            }
+        }
+        tbltabla.setModel(cargar);
+        tbltabla.updateUI();
     }
+//darwin
+//cristian
+    private void cbxfiltro() {
+        if(txtnombrebuscar.getText().isEmpty()){
+            System.out.println("No esta haciendo nada");
+            cargarTabla();
+            filtrarxusuario();
+        } else{
+            System.out.println("Primero busqueda luego cargar");
+        }
+        int index = cbxtipos.getSelectedIndex();
+        String combobox = cbxtipos.getItemAt(index);
+        int filas = tbltabla.getRowCount();
+        DefaultTableModel cargar = new DefaultTableModel();
+        if (combobox.equals("TODOS")) {
+            buscarDocumento();
+        } else if (combobox.equals("PDF")) {
+            cargar.setRowCount(0);
+            cargar.addColumn(tbltabla.getColumnName(0));
+            cargar.addColumn(tbltabla.getColumnName(1));
+            cargar.addColumn(tbltabla.getColumnName(2));
+            cargar.addColumn(tbltabla.getColumnName(3));
+            for (int i = 0; i <= filas - 1; i++) {
+                String nombre = tbltabla.getValueAt(i, 2).toString();
+                if (nombre.endsWith(combobox.toLowerCase())) {
+                    String[] filtrarpdf = {tbltabla.getValueAt(i, 0).toString(), tbltabla.getValueAt(i, 1).toString(),
+                        tbltabla.getValueAt(i, 2).toString(), tbltabla.getValueAt(i, 3).toString(),};
+                    cargar.addRow(filtrarpdf);
+                }
+            }
+        } else if (combobox.equals("WORD")) {
+            cargar.setRowCount(0);
+            cargar.addColumn(tbltabla.getColumnName(0));
+            cargar.addColumn(tbltabla.getColumnName(1));
+            cargar.addColumn(tbltabla.getColumnName(2));
+            cargar.addColumn(tbltabla.getColumnName(3));
+            
+            combobox = "docx";
+            for (int i = 0; i <= filas - 1; i++) {
+                String nombre = tbltabla.getValueAt(i, 2).toString();
+                if (nombre.endsWith(combobox.toLowerCase())) {
+                    String[] filtrarword = {tbltabla.getValueAt(i, 0).toString(), tbltabla.getValueAt(i, 1).toString(),
+                        tbltabla.getValueAt(i, 2).toString(), tbltabla.getValueAt(i, 3).toString(),};
+                    cargar.addRow(filtrarword);
+                }
+            }
+        } else if (combobox.equals("C")) {
+            cargar.setRowCount(0);
+            cargar.addColumn(tbltabla.getColumnName(0));
+            cargar.addColumn(tbltabla.getColumnName(1));
+            cargar.addColumn(tbltabla.getColumnName(2));
+            cargar.addColumn(tbltabla.getColumnName(3));
+            combobox = "c";
+            for (int i = 0; i <= filas - 1; i++) {
+                String nombre = tbltabla.getValueAt(i, 2).toString();
+                if (nombre.endsWith(combobox.toLowerCase())) {
+                    String[] filtrarc = {tbltabla.getValueAt(i, 0).toString(), tbltabla.getValueAt(i, 1).toString(),
+                        tbltabla.getValueAt(i, 2).toString(), tbltabla.getValueAt(i, 3).toString(),};
+                    cargar.addRow(filtrarc);
+                    
+                }
+            }
+        }
+        if(combobox.equals("TODOS")){
+            cargarcbx();
+        } else {
+            tbltabla.setModel(cargar);
+            cargarcbx();
+        }
+//cristian
     }
 
     /**
@@ -113,12 +277,14 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         txtdireccion = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        bienvenida1 = new javax.swing.JLabel();
+        lblnombre = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtnombrebuscar = new javax.swing.JTextField();
-        btnbuscar = new javax.swing.JButton();
+        btnrefrescar = new javax.swing.JButton();
         cbxtipos = new javax.swing.JComboBox<>();
+        btnbuscar = new javax.swing.JButton();
+        bienvenida2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -219,11 +385,10 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         jPanel1.add(jPanel2);
         jPanel2.setBounds(459, 0, 10, 210);
 
-        bienvenida1.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        bienvenida1.setForeground(new java.awt.Color(0, 0, 0));
-        bienvenida1.setText("Bienvenido de vuelta");
-        jPanel1.add(bienvenida1);
-        bienvenida1.setBounds(20, 30, 251, 26);
+        lblnombre.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
+        lblnombre.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(lblnombre);
+        lblnombre.setBounds(230, 30, 160, 30);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
@@ -249,6 +414,28 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         jPanel1.add(txtnombrebuscar);
         txtnombrebuscar.setBounds(550, 102, 90, 30);
 
+        btnrefrescar.setBackground(new java.awt.Color(255, 255, 255));
+        btnrefrescar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnrefrescar.setForeground(new java.awt.Color(0, 0, 0));
+        btnrefrescar.setText("Refrescar");
+        btnrefrescar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnrefrescar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnrefrescarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnrefrescar);
+        btnrefrescar.setBounds(680, 160, 83, 30);
+
+        cbxtipos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS", "PDF", "WORD", "C" }));
+        cbxtipos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxtiposActionPerformed(evt);
+            }
+        });
+        jPanel1.add(cbxtipos);
+        cbxtipos.setBounds(550, 160, 90, 22);
+
         btnbuscar.setBackground(new java.awt.Color(255, 255, 255));
         btnbuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnbuscar.setForeground(new java.awt.Color(0, 0, 0));
@@ -260,11 +447,13 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
             }
         });
         jPanel1.add(btnbuscar);
-        btnbuscar.setBounds(700, 130, 83, 30);
+        btnbuscar.setBounds(680, 100, 83, 30);
 
-        cbxtipos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PDF", "WORD", "C" }));
-        jPanel1.add(cbxtipos);
-        cbxtipos.setBounds(550, 160, 90, 22);
+        bienvenida2.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
+        bienvenida2.setForeground(new java.awt.Color(0, 0, 0));
+        bienvenida2.setText("Bienvenido de vuelta,");
+        jPanel1.add(bienvenida2);
+        bienvenida2.setBounds(20, 30, 210, 26);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -296,9 +485,18 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
         AbrirArchivo();
     }//GEN-LAST:event_btnabrirActionPerformed
 
+    private void btnrefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnrefrescarActionPerformed
+        cargarTabla();
+        cargarcbx();
+    }//GEN-LAST:event_btnrefrescarActionPerformed
+
     private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
         buscarDocumento();
     }//GEN-LAST:event_btnbuscarActionPerformed
+
+    private void cbxtiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxtiposActionPerformed
+        cbxfiltro();
+    }//GEN-LAST:event_cbxtiposActionPerformed
 
     /**
      * @param args the command line arguments
@@ -338,10 +536,11 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Busqueda;
     private javax.swing.JLabel JLabel5;
-    private javax.swing.JLabel bienvenida1;
+    private javax.swing.JLabel bienvenida2;
     private javax.swing.JButton btnabrir;
     private javax.swing.JButton btnagregar;
     private javax.swing.JButton btnbuscar;
+    private javax.swing.JButton btnrefrescar;
     private javax.swing.JComboBox<String> cbxabrir;
     private javax.swing.JComboBox<String> cbxtipos;
     private javax.swing.JLabel jLabel2;
@@ -350,10 +549,10 @@ private ModeloTablaArchivo mtl = new ModeloTablaArchivo();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private static javax.swing.JLabel lblnombre;
     private javax.swing.JTable tbltabla;
     private javax.swing.JTextField txtdireccion;
     private javax.swing.JTextField txtnombre;
     private javax.swing.JTextField txtnombrebuscar;
     // End of variables declaration//GEN-END:variables
 }
-

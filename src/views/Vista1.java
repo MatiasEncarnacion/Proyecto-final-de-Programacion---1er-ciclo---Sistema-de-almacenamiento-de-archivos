@@ -4,8 +4,9 @@
  */
 package views;
 
-import sistema_de_almacenamiento.Repaso;
+import controler.LeonelControler;
 import javax.swing.JOptionPane;
+import sistema_de_almacenamiento.InicioSesion;
 
 /**
  *
@@ -13,13 +14,42 @@ import javax.swing.JOptionPane;
  */
 public class Vista1 extends javax.swing.JFrame {
 
+    private LeonelControler lc = new LeonelControler();
+    Matias1 M = new Matias1();
     /**
      * Creates new form Vista1
      */
-    Repaso rp = new Repaso();
+    InicioSesion Is = new InicioSesion();
+
     public Vista1() {
         initComponents();
         this.setLocationRelativeTo(null);
+    }
+
+
+    public void iniciarSesion() {
+        if (usuario.getText().isEmpty() || clave.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Hay campos vacios", "Faltan datos", HEIGHT);
+        } else {
+            String usuario = this.usuario.getText();
+            String clave = this.clave.getText();
+            if (lc.iniciarSesion(usuario, clave).equals(usuario)) {
+                this.usuario.setName(usuario);
+                System.out.println(this.usuario.getName());
+                this.dispose();
+                Matias1 newframe = new Matias1();
+                newframe.setVisible(true);
+                M.getlbl(this.usuario.getName());   
+            } else {
+                JOptionPane.showMessageDialog(null, "La contraseña es incorrecta", "Contraseña incorrecta", HEIGHT);
+            }
+        }
+    }
+    
+    public String nombrar() {
+        String nombrar = usuario.getName();
+        System.out.println(nombrar);
+        return nombrar;
     }
 
     /**
@@ -38,6 +68,7 @@ public class Vista1 extends javax.swing.JFrame {
         usuario = new javax.swing.JTextField();
         clave = new javax.swing.JTextField();
         entrar = new javax.swing.JButton();
+        registrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,11 +104,25 @@ public class Vista1 extends javax.swing.JFrame {
             }
         });
 
+        registrar.setBackground(new java.awt.Color(255, 255, 255));
+        registrar.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
+        registrar.setForeground(new java.awt.Color(0, 0, 0));
+        registrar.setText("Registrarse");
+        registrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(83, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(43, 43, 43))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(133, 133, 133)
@@ -85,21 +130,19 @@ public class Vista1 extends javax.swing.JFrame {
                         .addGap(61, 61, 61))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clave, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(47, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(registrar)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(clave, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(43, 43, 43))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(entrar)
-                        .addGap(161, 161, 161))))
+                        .addGap(109, 109, 109))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,9 +157,11 @@ public class Vista1 extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
-                .addComponent(entrar)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGap(34, 34, 34)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(entrar)
+                    .addComponent(registrar))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -134,41 +179,13 @@ public class Vista1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     int contador = 3;
     private void entrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrarActionPerformed
-        String U = "Matias";
-        String C = "12345";
-        String U2 = "Leonel";
-        String C2 = "54321";
-        int verificador = 0;
-        int retorno = 0;
-        String usuario = "";
-        String contraseña = "";
-
-        usuario = this.usuario.getText();
-        contraseña = this.clave.getText();
-        retorno = rp.inicioSesion(usuario, contraseña, U, C, U2, C2);
-        if (retorno == 1) {
-            verificador = 1;
-        } else {
-            contador = contador - 1;
-        }
-        if (contador == 0) {
-            verificador = 2;
-            JOptionPane.showMessageDialog(null, "No se ha podido validar la contraseña en 3 intentos");
-        }
-
-        if (verificador == 2) {
-            this.dispose();
-        } else if (verificador == 1){
-            if (usuario.equals("Matias")){
-                Matias1 newframe = new Matias1();
-                newframe.setVisible(true);
-                this.dispose();
-            } else if (usuario.equals("Leonel")){
-                Leonel1 newframe = new Leonel1();
-                newframe.setVisible(true);
-            }
-        }
+        iniciarSesion();
     }//GEN-LAST:event_entrarActionPerformed
+
+    private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
+        Leonel1 newframe = new Leonel1();
+        newframe.setVisible(true);
+    }//GEN-LAST:event_registrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -212,6 +229,7 @@ public class Vista1 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton registrar;
     private javax.swing.JTextField usuario;
     // End of variables declaration//GEN-END:variables
 }

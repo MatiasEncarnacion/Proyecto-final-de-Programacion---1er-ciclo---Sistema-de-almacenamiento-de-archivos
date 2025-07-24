@@ -38,14 +38,14 @@ public class Utilidades {
         escribir.write(text);
         escribir.close();
     }
+    
     public List<String> readLines(String name_file) throws IOException {
         List<String> lines = new ArrayList<>();
         File file = new File(path + File.separatorChar + name_file);
         if (!file.exists()) {
             return lines;
         }
-//jose
-//matias
+
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
         while ((line = br.readLine()) != null) {
@@ -54,13 +54,15 @@ public class Utilidades {
         br.close();
         return lines;
     }
+//jose
+//matias
     public void save(String text, String name_file) throws IOException {
         FileWriter file = new FileWriter(path + File.separatorChar + name_file, true);
         file.write(text);
         file.close();
     }
-    public boolean guardar_archivo(String nombre, String direccion) {
-        String data = generar_numeracion() + "\t" + nombre + "\t" + direccion + "\t" + "\n";
+    public boolean guardar_archivo(String nombre, String direccion, String usuario) {
+        String data = generar_numeracion() + "\t" + nombre + "\t" + direccion + "\t" + usuario + "\n";
         try {
             save(data, file_name);
             return true;
@@ -136,7 +138,7 @@ public class Utilidades {
             inv = inv.substring(num.toString().length());
             inv += num.toString();
         } else {
-            inv = "000001";
+            inv = "000000";
         }
         return inv;
     }
