@@ -26,7 +26,6 @@ public class Vista1 extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
-
     public void iniciarSesion() {
         if (usuario.getText().isEmpty() || clave.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Hay campos vacios", "Faltan datos", HEIGHT);
@@ -39,13 +38,13 @@ public class Vista1 extends javax.swing.JFrame {
                 this.dispose();
                 Matias1 newframe = new Matias1();
                 newframe.setVisible(true);
-                M.getlbl(this.usuario.getName());   
+                M.getlbl(this.usuario.getName());
             } else {
                 JOptionPane.showMessageDialog(null, "La contraseña es incorrecta", "Contraseña incorrecta", HEIGHT);
             }
         }
     }
-    
+
     public String nombrar() {
         String nombrar = usuario.getName();
         System.out.println(nombrar);
